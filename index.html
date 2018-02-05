@@ -1,0 +1,86 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="index.css" />
+<script type="text/javascript" src="Exploring Taglib.js"></script>
+<script type="text/javascript" src="getDataset.js"></script>
+<script type="text/javascript" src="sql.js"></script>
+<script>
+        function save() {
+            //Create the database
+            var db = new window.SQL.Database("test");
+            db.run("CREATE TABLE test (列1 int, 列2 char);");         
+            db.run("INSERT INTO test VALUES (0,'hello');");
+            db.run("INSERT INTO test VALUES (1,'world');");
+            db.run("INSERT INTO test VALUES (55,'34534545');");
+            db.run("INSERT INTO test VALUES (166,'woteggrgrld');");
+            //save to local file
+            var data = db.export();
+            var arraybuff = data.buffer;
+            var blob = new Blob([arraybuff]);
+            var url = window.URL.createObjectURL(blob);
+            var a = document.createElement("a");
+            a.href = url;           
+            a.download = 'test.db';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+        function getfile() {
+            var files = document.getElementById("uploadInput").files;//document.getElementById("uploadInput").value;
+            var file = files[0];
+            var fr = new FileReader();
+            fr.onload = function(){
+                var Uints = new Uint8Array(fr.result);
+                var db = new window.SQL.Database(Uints);
+                var res = db.exec("SELECT 列2 FROM test");
+                for(i=0;i<res[0].values.length;i++)
+                {//query values
+                    console.log(res[0].values[i]+' ');
+                }   
+            }
+            fr.readAsArrayBuffer(file);
+        }
+
+</script>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Entity Profiles</title>
+</head>
+<body>
+<div class="main">
+<h1 id="title">Entity Profiling</h1>
+<div id="selectDataset">
+        <div id="datasetTable">
+          <table id="dateset" width=171 border=1 cellspacing="0px">
+          <tr><td>Select Dateset
+          </td></tr>
+          <tr height=262><td id="innercontent"></td></tr>
+          </table>
+        </div>
+        <div id="setupPara">
+        <table id="setupTable" border=1 cellspacing="0px">
+        <tr><td id="setup" width=171>Setup Parameters</td></tr>
+        <tr><td height=35>#attributive_taglib</td></tr>
+        <tr><td height=35></td></tr>
+        <tr><td height=35>#relational_taglib</td></tr>
+        <tr><td height=35></td></tr>
+        </table>
+        </div>
+</div>
+<div id="view">
+        <div id="MainView">
+          <table id="fuctions" width=681 border=1 cellspacing="0px">
+          <tr width=700><td>
+          <button type="button" class= "buttonTag" onclick="alert('Welcome!')">Exploring Taglib</button></td>
+          <td><button type="button" class= "buttonTag" onclick="loadXMLDoc()">Viewing Entity</button></td>
+          <td><button type="button" class= "buttonTag" onclick="alert('Welcome!')">Comparing Entities</button></td>
+          </tr>
+          <tr><td colspan="3" height=455>
+            </td></tr>
+          </table>
+        </div>
+</div>
+
+</div>
+</body>
+</html>
